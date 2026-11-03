@@ -29,8 +29,8 @@ td.n,th.n{text-align:center}
 </head>
 <body>
 <main>
-<h1>Research infrastructure projects</h1>
-<p class="sub">17 projects, 15 organisations. Each ribbon is an organisation's involvement in a project, flowing through Project and Type to Category. Band thickness shows the number of organisations involved. Hover or tap a project or an organisation for details.</p>
+<h1>INSPIRE - P2 - EOIs - Research infrastructure projects in Digital Arts and Humanities</h1>
+<p class="sub">18 projects, 15 organisations. Each ribbon is an organisation's involvement in a project, flowing through Project and Type to Category. Band thickness shows the number of organisations involved. Hover or tap a project or an organisation for details.</p>
 <div class="legend" id="legend"></div>
 <div id="info">Hover over a project, organisation or ribbon.</div>
 <div class="scroll"><svg id="viz" viewBox="0 0 1000 780" role="img" aria-label="Alluvial diagram of organisations, projects, types and categories"></svg></div>
@@ -66,7 +66,7 @@ const P=[
 ["PACT","Performing Arts and Creative Technologies (PACT)","Research facility","Arts",["UCD"],[],["TUD","NCAD","IADT",]],
 ["National Humanities Platform","National Humanities Platform","Virtual space (platform)","Humanities",["UL"],["UCC","MU"],[]],
 ["Imbas","Imbas: a National Data Centre for Celtic Studies","Centralised physical resources","Humanities",["UoG"],[],["DIAS"]],
-["NARL - National Archaeological Research Laboratory", "National Archaeological Research Laboratory","Centralised physical resources","Humanities",["UCD"],[],["UCC","UoG"]]
+["National Archaeological Research Lab (NARL)", "National Archaeological Research Laboratory","Centralised physical resources","Humanities",["UCD"],[],["UCC","UoG"]]
 ].map(([short,name,type,cat,L,Pa,Po])=>({short,name,type,cat,L,Pa,Po,n:L.length+Pa.length+Po.length}));
 
 const CATS=["Humanities","Arts","Creative Industries","Adjacent"];
