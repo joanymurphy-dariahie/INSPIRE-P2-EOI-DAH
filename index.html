@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Research infrastructure projects: organisations, projects, types and categories</title>
+<style>
+:root{--bg:#fff;--fg:#1d2330;--muted:#5d6675;--line:#d9dde4;--card:#f5f6f8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181e;--fg:#e8eaee;--muted:#9aa3b2;--line:#303641;--card:#1d222b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15181e;--fg:#e8eaee;--muted:#9aa3b2;--line:#303641;--card:#1d222b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1040px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.4rem;margin:0 0 4px}h2{font-size:1.05rem;margin:28px 0 8px}
+p.sub{color:var(--muted);margin:0 0 14px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0;font-size:.85rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+#info{min-height:3.4em;background:var(--card);border-radius:8px;padding:8px 12px;font-size:.9rem;margin:8px 0}
+.scroll{overflow-x:auto}
+svg{display:block;min-width:820px;width:100%;height:auto}
+svg text{fill:var(--fg);font-size:11px}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:3.5px;stroke-linejoin:round}
+.rib{transition:opacity .15s}.hit{cursor:pointer}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+td.n,th.n{text-align:center}
+</style>
+</head>
+<body>
+<main>
+<h1>Research infrastructure projects</h1>
+<p class="sub">17 projects, 15 organisations. Each ribbon is an organisation's involvement in a project, flowing through Project and Type to Category. Band thickness shows the number of organisations involved. Hover or tap a project or an organisation for details.</p>
+<div class="legend" id="legend"></div>
+<div id="info">Hover over a project, organisation or ribbon.</div>
+<div class="scroll"><svg id="viz" viewBox="0 0 1000 780" role="img" aria-label="Alluvial diagram of organisations, projects, types and categories"></svg></div>
+
+<h2>Organisation by category (projects involved; L = number led)</h2>
+<div class="scroll"><table id="matrix"></table></div>
+
+<h2>Collaboration grid (projects shared by each pair of organisations)</h2>
+<p class="sub">Bold number: projects where both organisations are a lead or partner. Grey "+n": further shared projects where at least one is only a potential partner. The diagonal shows each organisation's total number of projects.</p>
+<style>#grid td,#grid th{padding:4px 5px;white-space:nowrap}#grid th{font-weight:600}</style>
+<div class="scroll"><table id="grid"></table></div>
+
+<h2>Project list</h2>
+<div class="scroll"><table id="list"></table></div>
+</main>
+<script>
+// [short name, full name, type, category, leads, partners, potential partners]
+const P=[
+["ACTRI","Atlantic Creative Technologies Research Infrastructure (ACTRI)","Research facility","Creative Industries",["ATU"],[],[]],
+["Celtic Studies Virtual Corpus","Celtic Studies: Curating a Virtual Corpus: Ireland’s Manuscript Heritage in Context","Distributed physical resources","Humanities",["DIAS"],["TCD","UoG","UCC"],["UL"]],
+["SCREEN","The National Research and Innovation Centre for the Creative Industries - SCREEN","Research facility","Creative Industries",["IADT"],[],[]],
+["SOUND","The National Research and Innovation Centre for the Creative Industries - SOUND","Research facility","Creative Industries",["IADT"],[],[]],
+["Shared AV & Immersive Media","Shared Audio-visual and Immersive Media Research Infrastructure","Research facility","Arts",["MU"],[],[]],
+["Creativity Works","Creativity Works - Ireland’s Shared National Design Research Infrastructure","Virtual space (platform)","Creative Industries",["NCAD"],[],[]],
+["Irish Institute for Creative Research","Irish Institute for Creative Research in Art, Design & Heritage","Virtual space (platform)","Arts",["NCAD"],[],[]],
+["CARISCA","Capture and Analysis Research Instrument Suite for Culture and the Arts (CARISCA)","Centralised physical resources","Humanities",["TCD"],[],["UCC","UoG","MU","UL","NCAD"]],
+["PRISM","PRISM (Public Research, Impact and Storytelling Media): Ireland’s National Research Communications and Knowledge Exchange Infrastructure","Distributed physical resources","Adjacent",["TCD"],[],[]],
+["Dána - Expanded & Digital Arts","Dána Expanded and Digital Arts Infrastructure","Distributed physical resources","Arts",["UCC"],["UoG","UL"],["TCD","MU"]],
+["Dána - Shared Advanced Infrastructure","Shared Advanced Infrastructure towards Dána: National Centre for Arts Practice Research","Distributed physical resources","Arts",["UL"],["UCC","UoG"],[]],
+["Dána - Global Irish Institute","Dána: The Global Irish Institute for Arts Practice Research","Research facility","Arts",["UoG"],[],[]],
+["National Humanities Laboratory","National Humanities Laboratory Shared Infrastructure","Distributed physical resources","Humanities",["UCC"],["UL","MU"],[]],
+["Regional TRE & Data Platform","Regional Trusted Research Environment and Active Data Platform","Virtual space (platform)","Humanities",["UCC"],["MTU","SETU","UL"],[]],
+["PACT","Performing Arts and Creative Technologies (PACT)","Research facility","Arts",["UCD"],[],["TUD","NCAD","IADT",]],
+["National Humanities Platform","National Humanities Platform","Virtual space (platform)","Humanities",["UL"],["UCC","MU"],[]],
+["Imbas","Imbas: a National Data Centre for Celtic Studies","Centralised physical resources","Humanities",["UoG"],[],["DIAS"]],
+["NARL - National Archaeological Research Laboratory", "National Archaeological Research Laboratory","Centralised physical resources","Humanities",["UCD"],[],["UCC","UoG"]]
+].map(([short,name,type,cat,L,Pa,Po])=>({short,name,type,cat,L,Pa,Po,n:L.length+Pa.length+Po.length}));
+
+const CATS=["Humanities","Arts","Creative Industries","Adjacent"];
+const COL={"Humanities":"#2a7fba","Arts":"#c2410c","Creative Industries":"#7c3aed","Adjacent":"#8a8f98"};
+const ROLE={Lead:{f:.9},Partner:{f:.4},"Potential partner":{f:.04,d:1}};
+const ci=c=>CATS.indexOf(c);
+const U=15,H=740,T=10,BW=12;
+
+// orderings
+const tAvg=t=>{const r=P.filter(p=>p.type===t);return r.reduce((s,p)=>s+ci(p.cat),0)/r.length};
+const types=[...new Set(P.map(p=>p.type))].sort((a,b)=>tAvg(a)-tAvg(b));
+P.sort((a,b)=>ci(a.cat)-ci(b.cat)||types.indexOf(a.type)-types.indexOf(b.type));
+P.forEach((p,i)=>p.i=i);
+const rows=[];
+P.forEach(p=>{p.L.forEach(o=>rows.push({o,p,role:"Lead"}));p.Pa.forEach(o=>rows.push({o,p,role:"Partner"}));p.Po.forEach(o=>rows.push({o,p,role:"Potential partner"}))});
+const rank={Lead:0,Partner:1,"Potential partner":2};
+const orgs=[...new Set(rows.map(r=>r.o))].map(o=>{const r=rows.filter(x=>x.o===o);return{o,b:r.reduce((s,x)=>s+x.p.i,0)/r.length}}).sort((a,b)=>a.b-b.b||a.o.localeCompare(b.o)).map(x=>x.o);
+const cats=CATS.filter(c=>P.some(p=>p.cat===c));
+
+// columns: node lists, value of each node, x positions
+const cols=[
+ {nodes:orgs,val:o=>rows.filter(r=>r.o===o).length,x:95},
+ {nodes:P.map(p=>p.short),val:s=>P.find(p=>p.short===s).n,x:290},
+ {nodes:types,val:t=>P.filter(p=>p.type===t).reduce((s,p)=>s+p.n,0),x:560},
+ {nodes:cats,val:c=>P.filter(p=>p.cat===c).reduce((s,p)=>s+p.n,0),x:830}
+];
+cols.forEach(c=>{const tot=c.nodes.reduce((s,n)=>s+c.val(n),0),gap=(H-tot*U)/(c.nodes.length-1);let y=T;c.g={};c.nodes.forEach(n=>{const v=c.val(n);c.g[n]={y,v};y+=v*U+gap})});
+
+// links
+const L1=rows.map(r=>({p:r.p,o:r.o,role:r.role,v:1,s:r.o,d:r.p.short,sk:r.p.i,dk:rank[r.role]*100+orgs.indexOf(r.o)}));
+const L2=P.map(p=>({p,v:p.n,s:p.short,d:p.type,sk:0,dk:p.i}));
+const L3=P.map(p=>({p,v:p.n,s:p.type,d:p.cat,sk:ci(p.cat)*100+p.i,dk:types.indexOf(p.type)*100+p.i}));
+function place(links,sc,dc){
+  [["s","sy","sk",sc],["d","dy","dk",dc]].forEach(([nk,yk,ok,col])=>{
+    col.nodes.forEach(n=>{let y=col.g[n].y;links.filter(l=>l[nk]===n).sort((a,b)=>a[ok]-b[ok]).forEach(l=>{l[yk]=y;y+=l.v*U})});
+  });
+}
+place(L1,cols[0],cols[1]);place(L2,cols[1],cols[2]);place(L3,cols[2],cols[3]);
+
+const NS="http://www.w3.org/2000/svg",svg=document.getElementById("viz"),info=document.getElementById("info");
+const el=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+const path=(x0,y0,x1,y1,h)=>{const m=(x0+x1)/2;return `M${x0},${y0}C${m},${y0} ${m},${y1} ${x1},${y1}L${x1},${y1+h}C${m},${y1+h} ${m},${y0+h} ${x0},${y0+h}Z`};
+const rib=[];
+[[L1,0],[L2,1],[L3,2]].forEach(([ls,ci_])=>ls.forEach(l=>{
+  const g=el("g",{class:"rib"});
+  const a={d:path(cols[ci_].x+BW,l.sy,cols[ci_+1].x,l.dy,l.v*U-1),fill:COL[l.p.cat],"fill-opacity":.5};
+  if(ci_===0){const s=ROLE[l.role];a["fill-opacity"]=s.f;if(s.d){a.stroke=COL[l.p.cat];a["stroke-width"]=1.3;a["stroke-dasharray"]="4 3";a["stroke-opacity"]=.95}}
+  el("path",a,g);
+  rib.push({l,g});
+}));
+const setOp=f=>rib.forEach(r=>r.g.style.opacity=f(r.l));
+const reset=()=>setOp(()=>1);
+const fmt=a=>a.length?a.join(", "):"none";
+function showP(p){
+  setOp(l=>l.p===p?1:.07);
+  info.innerHTML=`<strong>${p.name}</strong><br>${p.type} &middot; ${p.cat}<br>Lead: ${fmt(p.L)} &middot; Partners: ${fmt(p.Pa)} &middot; Potential partners: ${fmt(p.Po)}`;
+}
+function showO(o){
+  const mine=rows.filter(r=>r.o===o),ps=new Set(mine.map(r=>r.p));
+  setOp(l=>!ps.has(l.p)?.07:(l.o&&l.o!==o?.3:1));
+  info.innerHTML=`<strong>${o}</strong> (${mine.length} projects)<br>`+["Lead","Partner","Potential partner"].map(k=>{const x=mine.filter(r=>r.role===k).map(r=>r.p.short);return x.length?`${k}: ${x.join("; ")}`:""}).filter(Boolean).join("<br>");
+}
+rib.forEach(r=>{r.g.classList.add("hit");const on=()=>showP(r.l.p);r.g.addEventListener("mouseenter",on);r.g.addEventListener("click",on);r.g.addEventListener("mouseleave",reset)});
+
+// nodes + labels
+cols.forEach((c,i)=>c.nodes.forEach(n=>{
+  const g=c.g[n],h=g.v*U-1;
+  const bar=el("rect",{x:c.x,y:g.y,width:BW,height:h,rx:2,fill:i===3?COL[n]:"var(--muted)"});
+  const lab=i===0?{x:c.x-7,"text-anchor":"end"}:{x:c.x+BW+7,"text-anchor":"start"};
+  const t=el("text",{...lab,y:g.y+h/2+4,class:i>0?"halo":"","font-weight":i===3?600:400});
+  let txt=n;
+  if(i===3)txt=`${n} (${P.filter(p=>p.cat===n).length} projects)`;
+  if(i===2)txt=`${n} (${P.filter(p=>p.type===n).length})`;
+  t.textContent=txt;
+  [bar,t].forEach(e=>{
+    if(i===0){e.classList.add("hit");e.onmouseenter=e.onclick=()=>showO(n);e.onmouseleave=reset}
+    if(i===1){e.classList.add("hit");const p=P.find(p=>p.short===n);e.onmouseenter=e.onclick=()=>showP(p);e.onmouseleave=reset}
+  });
+}));
+["Organisation","Project","Type","Category"].forEach((h,i)=>{const t=el("text",{x:cols[i].x+(i===0?BW:0),y:H+T+24,"text-anchor":i===0?"end":"start","font-weight":600});t.style.fill="var(--muted)";t.textContent=h});
+
+// legend
+const lg=document.getElementById("legend");
+cats.forEach(c=>{const s=document.createElement("span");s.innerHTML=`<i style="background:${COL[c]}"></i>${c}`;s.style.cursor="pointer";
+  s.onmouseenter=s.onclick=()=>setOp(l=>l.p.cat===c?1:.07);s.onmouseleave=reset;lg.appendChild(s)});
+[["Lead","background:var(--muted)"],["Partner","background:var(--muted);opacity:.4"],["Potential partner","border:1.5px dashed var(--muted)"]].forEach(([k,st])=>{const s=document.createElement("span");s.innerHTML=`<i style="${st}"></i>${k} (Organisation to Project)`;lg.appendChild(s)});
+
+// matrix
+document.getElementById("matrix").innerHTML="<tr><th>Organisation</th>"+cats.map(c=>`<th class="n">${c}</th>`).join("")+"<th class=\"n\">Total</th></tr>"+
+ orgs.map(o=>{const r=rows.filter(x=>x.o===o);return"<tr><td>"+o+"</td>"+cats.map(c=>{const k=r.filter(x=>x.p.cat===c),l=k.filter(x=>x.role==="Lead").length;
+  return `<td class="n" style="${k.length?`background:${COL[c]}${k.length>2?"99":"44"};font-weight:600`:"color:var(--muted)"}">${k.length?k.length+(l?` (${l}L)`:""):"-"}</td>`}).join("")+`<td class="n">${r.length} (${r.filter(x=>x.role==="Lead").length}L)</td></tr>`}).join("")+
+ "<tr><th>Projects</th>"+cats.map(c=>`<th class="n">${P.filter(p=>p.cat===c).length}</th>`).join("")+`<th class="n">${P.length}</th></tr>`;
+
+// collaboration grid
+const inv=p=>[...p.L.map(o=>[o,1]),...p.Pa.map(o=>[o,1]),...p.Po.map(o=>[o,0])];
+const pair={};
+P.forEach(p=>{const m=inv(p);m.forEach(([a,ca])=>m.forEach(([b,cb])=>{if(a===b)return;const k=a+"|"+b;pair[k]=pair[k]||{c:0,t:0};if(ca&&cb)pair[k].c++;else pair[k].t++}))});
+document.getElementById("grid").innerHTML="<tr><th></th>"+orgs.map(o=>`<th class="n">${o}</th>`).join("")+"</tr>"+orgs.map(a=>`<tr><th>${a}</th>`+orgs.map(b=>{
+ if(a===b)return `<td class="n" style="background:var(--card);color:var(--muted)">${rows.filter(r=>r.o===a).length}</td>`;
+ const x=pair[a+"|"+b]||{c:0,t:0};
+ const bg=x.c?`background:#2a7fba${x.c>1?"99":"55"};font-weight:600`:x.t?"outline:1px dashed var(--muted);outline-offset:-3px":"";
+ return `<td class="n" style="${bg}">${x.c||""}${x.t?`<span style="color:var(--muted);font-weight:400"> +${x.t}</span>`:""}</td>`}).join("")+"</tr>").join("");
+
+// list
+document.getElementById("list").innerHTML="<tr><th>Project</th><th>Type</th><th>Category</th><th>Lead</th><th>Partners</th><th>Potential partners</th></tr>"+
+ P.map(p=>`<tr><td>${p.name}</td><td>${p.type}</td><td><span style="color:${COL[p.cat]}">&#9632;</span> ${p.cat}</td><td>${fmt(p.L)}</td><td>${fmt(p.Pa)}</td><td>${fmt(p.Po)}</td></tr>`).join("");
+</script>
+</body>
+</html>
