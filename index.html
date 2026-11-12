@@ -29,8 +29,8 @@ td.n,th.n{text-align:center}
 </head>
 <body>
 <main>
-<h1>Research infrastructure projects</h1>
-<p class="sub">17 projects, 15 organisations. Each ribbon is an organisation's involvement in a project, flowing through Project and Type to Category. Band thickness shows the number of organisations involved. Hover or tap a project or an organisation for details.</p>
+<h1>INSPIRE - P2 - EOIs - Research infrastructure projects in Digital Arts and Humanities</h1>
+<p class="sub">18 projects, 15 organisations. Each ribbon is an organisation's involvement in a project, flowing through Project and Type to Category. Band thickness shows the number of organisations involved. Hover or tap a project or an organisation for details. The projects have been divided into 3 categories, Arts, Humanities and Creative Industries, by DARIAH-IE and are subjective. For example, NARL has been added to Humanities - despite being submitted to RI under Social Sciences. PRISM has been categorised as Adjacent as the category is unclear.</p>
 <div class="legend" id="legend"></div>
 <div id="info">Hover over a project, organisation or ribbon.</div>
 <div class="scroll"><svg id="viz" viewBox="0 0 1000 780" role="img" aria-label="Alluvial diagram of organisations, projects, types and categories"></svg></div>
@@ -60,13 +60,13 @@ const P=[
 ["PRISM","PRISM (Public Research, Impact and Storytelling Media): Ireland’s National Research Communications and Knowledge Exchange Infrastructure","Distributed physical resources","Adjacent",["TCD"],[],[]],
 ["Dána - Expanded & Digital Arts","Dána Expanded and Digital Arts Infrastructure","Distributed physical resources","Arts",["UCC"],["UoG","UL"],["TCD","MU"]],
 ["Dána - Shared Advanced Infrastructure","Shared Advanced Infrastructure towards Dána: National Centre for Arts Practice Research","Distributed physical resources","Arts",["UL"],["UCC","UoG"],[]],
-["Dána - Global Irish Institute","Dána: The Global Irish Institute for Arts Practice Research","Research facility","Arts",["UoG"],[],[]],
+["Dána - Global Irish Institute","Dána: The Global Irish Institute for Arts Practice Research","Research facility","Arts",["UoG"],["UCC","UL"],[]],
 ["National Humanities Laboratory","National Humanities Laboratory Shared Infrastructure","Distributed physical resources","Humanities",["UCC"],["UL","MU"],[]],
 ["Regional TRE & Data Platform","Regional Trusted Research Environment and Active Data Platform","Virtual space (platform)","Humanities",["UCC"],["MTU","SETU","UL"],[]],
 ["PACT","Performing Arts and Creative Technologies (PACT)","Research facility","Arts",["UCD"],[],["TUD","NCAD","IADT",]],
 ["National Humanities Platform","National Humanities Platform","Virtual space (platform)","Humanities",["UL"],["UCC","MU"],[]],
 ["Imbas","Imbas: a National Data Centre for Celtic Studies","Centralised physical resources","Humanities",["UoG"],[],["DIAS"]],
-["NARL - National Archaeological Research Laboratory", "National Archaeological Research Laboratory","Centralised physical resources","Humanities",["UCD"],[],["UCC","UoG"]]
+["National Archaeological Research Lab (NARL)", "National Archaeological Research Laboratory","Centralised physical resources","Humanities",["UCD"],[],["UCC","UoG"]]
 ].map(([short,name,type,cat,L,Pa,Po])=>({short,name,type,cat,L,Pa,Po,n:L.length+Pa.length+Po.length}));
 
 const CATS=["Humanities","Arts","Creative Industries","Adjacent"];
