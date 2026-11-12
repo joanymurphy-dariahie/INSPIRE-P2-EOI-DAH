@@ -29,8 +29,10 @@ td.n,th.n{text-align:center}
 </head>
 <body>
 <main>
-<h1>INSPIRE - P2 - EOIs - Research infrastructure projects in Digital Arts and Humanities</h1>
-<p class="sub">18 projects, 15 organisations. Each ribbon is an organisation's involvement in a project, flowing through Project and Type to Category. Band thickness shows the number of organisations involved. Hover or tap a project or an organisation for details. The projects have been divided into 3 categories, Arts, Humanities and Creative Industries, by DARIAH-IE and are subjective. For example, NARL has been added to Humanities - despite being submitted to RI under Social Sciences. PRISM has been categorised as Adjacent as the category is unclear.</p>
+<h1>INSPIRE - P2 - EOIs - Arts and Humanities - DARIAH-IE Analysis</h1>
+<p class="sub">This information has been sourced from INSPIRE Phase 2 EOIs, the Resource and Project Type categories have been added by DARIAH-IE as part of the analysis process and may not accurately reflect the intent or scope of the EOI as submitted by the HEI.</p>
+
+<p class="sub">18 projects, 15 organisations. Each ribbon is an organisation's involvement in a project, flowing through Project Name and Resource Type to Category. Band thickness shows the number of organisations involved. Hover or tap a project or an organisation for details. The projects have been divided into 3 categories: Arts, Humanities, and Creative Industries/Technologies. Note that NARL has been added to Humanities - although it was submitted to RI under Social Sciences. PRISM has been categorised as Adjacent.</p>
 <div class="legend" id="legend"></div>
 <div id="info">Hover over a project, organisation or ribbon.</div>
 <div class="scroll"><svg id="viz" viewBox="0 0 1000 780" role="img" aria-label="Alluvial diagram of organisations, projects, types and categories"></svg></div>
@@ -78,7 +80,12 @@ const U=15,H=740,T=10,BW=12;
 // orderings
 const tAvg=t=>{const r=P.filter(p=>p.type===t);return r.reduce((s,p)=>s+ci(p.cat),0)/r.length};
 const types=[...new Set(P.map(p=>p.type))].sort((a,b)=>tAvg(a)-tAvg(b));
-P.sort((a,b)=>ci(a.cat)-ci(b.cat)||types.indexOf(a.type)-types.indexOf(b.type));
+P.sort((a,b)=>
+  ci(a.cat)-ci(b.cat)                          // 1. category (order set by CATS)
+  ||a.L[0].localeCompare(b.L[0])               // 2. lead organisation, A-Z
+  ||a.short.localeCompare(b.short)             // 3. project short name, A-Z
+  ||types.indexOf(a.type)-types.indexOf(b.type) // 4. type, last resort only
+);
 P.forEach((p,i)=>p.i=i);
 const rows=[];
 P.forEach(p=>{p.L.forEach(o=>rows.push({o,p,role:"Lead"}));p.Pa.forEach(o=>rows.push({o,p,role:"Partner"}));p.Po.forEach(o=>rows.push({o,p,role:"Potential partner"}))});
